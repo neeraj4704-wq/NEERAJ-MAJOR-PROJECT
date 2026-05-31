@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macro Master | Pro</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon"><i class="fas fa-fire"></i></div>
+                <h2>Macro<span>Master</span></h2>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-btn active" onclick="switchSection('dashboard')">
+                    <i class="fas fa-border-all"></i> Dashboard
+                </button>
+                <button class="nav-btn" onclick="switchSection('planner')">
+                    <i class="fas fa-utensils"></i> Diet Planner
+                </button>
+                <button class="nav-btn" onclick="switchSection('grocery')">
+                    <i class="fas fa-shopping-cart"></i> Grocery List
+                </button>
+                <button class="nav-btn" onclick="switchSection('calculator')">
+                    <i class="fas fa-calculator"></i> TDEE Calculator
+                </button>
+                <button class="nav-btn" onclick="handleLogout()" style="color: #ef4444; margin-top: auto;">
+    <i class="fas fa-sign-out-alt"></i> Logout
+</button>
+            </nav>
+
+       <div class="cyber-water-container">
+    <div class="water-header">
+        <span class="water-title"><i class="fas fa-tint drop-icon"></i> Hydration Core</span>
+        <div class="water-counter-wrapper">
+            <span id="water-current" class="water-count">0</span>
+            <span class="water-divider">/</span>
+            <input type="number" id="water-max-input" class="cyber-input" value="8" min="1" max="30" onchange="updateMaxWater()">
+        </div>
+    </div>
+    
+    <div class="cyber-progress-track">
+        <div class="cyber-progress-fill" id="water-fill" style="width: 0%;">
+            <div class="glow-tip"></div>
+        </div>
+    </div>
+
+    <button class="cyber-btn" onclick="addWater()">
+        <i class="fas fa-plus"></i> Add Glass
+    </button>
+</div>
+        </aside>
+
+        <main class="main-content">
+
+        <div class="glass-panel" style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem;">
+            <div style="text-align: left;">
+                <h1 id="user-greeting-text" style="font-size: 1.8rem; margin: 0; padding: 0; width: auto;">Welcome to MacroMaster</h1>
+                <p style="color: var(--text-muted); margin: 5px 0 0 0; width: auto;">Your AI-Powered Nutrition Architect</p>
+            </div>
+            <div style="background: rgba(14, 165, 233, 0.1); padding: 15px; border-radius: 50%; color: var(--primary); flex-shrink: 0;">
+                <i class="fas fa-user-astronaut fa-2x"></i>
+            </div>
+        </div>
+
+        
+
+
+            <header class="top-header">
+                <div class="mobile-nav">
+                    <button class="icon-btn mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1 id="page-title">Dashboard Overview</h1>
+                </div>
+                <div class="header-actions">
+                    <span id="current-date" class="date-badge"></span>
+                    <button class="icon-btn" onclick="window.print()" title="Export to PDF"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </header>
+
+            <section id="dashboard" class="content-section active">
+                <div class="bento-grid">
+                    <div class="bento-card hero-card">
+                        <h3>Daily Goals</h3>
+                        <div class="rings-container">
+                            <div class="macro-ring" id="protein-ring" style="--perc: 0deg; --color: #10b981;">
+                                <div class="ring-inner">
+                                    <span id="dash-protein">0</span>g
+                                    <small>Protein</small>
+                                </div>
+                            </div>
+                            <div class="macro-ring" id="budget-ring" style="--perc: 0deg; --color: #6366f1;">
+                                <div class="ring-inner">
+                                    ₹<span id="dash-budget">0</span>
+                                    <small>Budget</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bento-card stat-card">
+                        <div class="stat-icon"><i class="fas fa-fire-flame-curved"></i></div>
+                        <div>
+                            <p>Est. Calories</p>
+                            <h2 id="dash-cals">0 <small>kcal</small></h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-panel" style="margin-top: 20px; border-color: var(--primary);">
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+        <div style="background: var(--primary-glow); padding: 10px; border-radius: 12px; color: var(--primary);">
+            <i class="fas fa-brain"></i>
+        </div>
+        <h3 style="color: var(--primary);">AI Insight Dashboard</h3>
+    </div>
+    <p id="ai-insight-text" style="color: var(--text-muted); line-height: 1.6;">
+        Waiting for enough macro data to generate personalized metabolism insights. Generate a diet plan to activate the AI.
+    </p>
+</div>
+            </section>
+
+            <section id="planner" class="content-section">
+                <div class="control-panel glass-panel">
+                    <div class="input-group">
+                        <label><i class="fas fa-wallet"></i> Max Budget (₹)</label>
+                        <input type="number" id="inp-budget" placeholder="e.g. 500">
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-fire"></i> Target Calories</label>
+                        <input type="number" id="inp-cals" placeholder="e.g. 2200">
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-dumbbell"></i> Target Protein (g)</label>
+                        <input type="number" id="inp-protein" placeholder="e.g. 150">
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-clock"></i> Meals / Day</label>
+                        <select id="inp-meals">
+                            <option value="3">3 Meals (Standard)</option>
+                            <option value="4">4 Meals (+ Pre-Workout)</option>
+                            <option value="5">5 Meals (Pro Bodybuilder)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-leaf"></i> Preference</label>
+                        <select id="inp-type">
+                            <option value="all">Anything</option>
+                            <option value="veg">Vegetarian</option>
+                            <option value="nonveg">Non-Vegetarian</option>
+                        </select>
+                    </div>
+                    <button class="primary-btn glow-effect" onclick="generateDiet()" style="flex: 1 1 100%; margin-top: 10px;">
+                        <i class="fas fa-bolt"></i> Generate Daily Schedule
+                    </button>
+                </div>
+
+                <div id="diet-results" class="results-grid">
+                    <div class="empty-state">
+                        <i class="fas fa-robot"></i>
+                        <p>Awaiting your parameters to construct the optimal diet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="grocery" class="content-section">
+                <div class="grocery-container glass-panel">
+                    <div class="grocery-header">
+                        <h2><i class="fas fa-shopping-basket"></i> Auto-Generated Shopping List</h2>
+                        <p>Based on your current generated diet plan.</p>
+                    </div>
+                    <ul id="grocery-list" class="check-list">
+                        <div class="empty-state">Generate a diet first to see your list here.</div>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="calculator" class="content-section">
+                <div class="glass-panel calc-container">
+                    <div class="calc-header">
+                        <h2><i class="fas fa-fire-alt"></i> Smart Calorie Calculator</h2>
+                        <p>Determine your daily energy expenditure and macro targets based on your exact metrics.</p>
+                    </div>
+                    
+                    <div class="calc-grid">
+                        <div class="input-group">
+                            <label>Age (Years)</label>
+                            <input type="number" id="calc-age" placeholder="e.g. 21">
+                        </div>
+                        <div class="input-group">
+                            <label>Gender</label>
+                            <select id="calc-gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Weight (kg)</label>
+                            <input type="number" id="calc-weight" placeholder="e.g. 75">
+                        </div>
+                        <div class="input-group">
+                            <label>Height (cm)</label>
+                            <input type="number" id="calc-height" placeholder="e.g. 175">
+                        </div>
+                        <div class="input-group full-width" style="grid-column: 1 / -1;">
+                            <label>Activity Level</label>
+                            <select id="calc-activity">
+                                <option value="1.2">Sedentary (Office job, little exercise)</option>
+                                <option value="1.375">Lightly Active (Light workout 1-3 days/week)</option>
+                                <option value="1.55">Moderately Active (Moderate workout 3-5 days/week)</option>
+                                <option value="1.725">Very Active (Hard weightlifting 6-7 days/week)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="primary-btn glow-effect full-width-btn" onclick="calculateTDEE()" style="width: 100%; justify-content: center; margin-top: 15px;">
+                        <i class="fas fa-cogs"></i> Analyze Metabolism
+                    </button>
+
+                    <div id="calc-results" class="results-dashboard hidden">
+                        </div>
+                </div>
+            </section>
+            <div id="meal-modal" class="modal-overlay hidden">
+                <div class="modal-content glass-panel">
+                    <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+                    <img id="modal-img" src="" alt="Meal">
+                    <div class="modal-body">
+                        <h2 id="modal-title">Meal Name</h2>
+                        <div class="tag-container" style="margin: 15px 0;">
+                            <span class="macro-tag pro"><i class="fas fa-bolt"></i> <span id="modal-pro">0</span>g</span>
+                            <span class="macro-tag cost"><i class="fas fa-rupee-sign"></i> ₹<span id="modal-cost">0</span></span>
+                            <span class="macro-tag"><i class="fas fa-fire"></i> <span id="modal-cals">0</span> kcal</span>
+                        </div>
+                        <div class="modal-details">
+                            <h3 style="color: var(--primary); font-size: 1rem; margin-bottom: 10px;"><i class="fas fa-list-ul"></i> Ingredients Breakdown</h3>
+                            <ul id="modal-items" class="ingredient-list">
+                                </ul>
+                            <h3 style="color: var(--primary); font-size: 1rem; margin-top: 20px; margin-bottom: 10px;"><i class="fas fa-utensils"></i> Prep Instructions</h3>
+                            <p id="modal-instructions" style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="index.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        
+        // 1. NEW: Import the Firestore Database tools!
+        import { getFirestore, doc, setDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+       
+        // Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBwb0oMB3OWvnbwNh4vQ2_GaEkpTro3jB8",
+  authDomain: "macromaster-f84d7.firebaseapp.com",
+  projectId: "macromaster-f84d7",
+  storageBucket: "macromaster-f84d7.firebasestorage.app",
+  messagingSenderId: "761027683964",
+  appId: "1:761027683964:web:651fd4a16f3ac0143e8bf9"
+};
+        
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app); // 2. NEW: Wake up the database!
+
+        // 3. NEW: Create a global function that script.js can use to save the diet
+        window.saveDietToDatabase = async function(dietPlan) {
+            const user = auth.currentUser;
+            if (user) {
+                try {
+                    // 1. Keep updating the main user profile with their most recent activity
+                    const userRef = doc(db, 'users', user.uid);
+                    await setDoc(userRef, {
+                        lastGenerated: serverTimestamp()
+                    }, { merge: true });
+                    
+                    // 2. NEW: Save the actual diet into a permanent "dietHistory" Subcollection!
+                    const historyRef = collection(db, 'users', user.uid, 'dietHistory');
+                    await addDoc(historyRef, {
+                        dietData: dietPlan,
+                        createdAt: serverTimestamp()
+                    });
+                    
+                    console.log("✅ Diet successfully archived in History!");
+                } catch (error) {
+                    console.error("Error saving to Firebase:", error);
+                }
+            }
+        };
+
+        // Your existing Auth Listener stays exactly the same down here
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const greetingElement = document.getElementById('user-greeting-text');
+                const isNewSignup = sessionStorage.getItem('isNewSignup');
+                const userName = user.displayName || "Athlete"; 
+
+                if (isNewSignup === 'true') {
+                    greetingElement.innerHTML = `Welcome, <span style="color: var(--primary);">${userName}</span>! 🎉`;
+                } else {
+                    greetingElement.innerHTML = `Welcome back, <span style="color: var(--primary);">${userName}</span>!`;
+                }
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+    </script>
+</body>
+</html>

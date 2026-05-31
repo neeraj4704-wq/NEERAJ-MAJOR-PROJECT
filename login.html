@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MacroMaster | Login</title>
+    <link rel="stylesheet" href="index.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* THE NEW PREMIUM BACKGROUND */
+        body { 
+            /* This creates a dark, 85% opaque overlay on top of a beautiful dark-gym Unsplash photo */
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), 
+                        url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            
+            /* Keeps the login box perfectly centered */
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        /* PREMIUM GLASS LOGIN BOX */
+        .glass-panel.auth-container { 
+            background: rgba(0, 0, 0, 0.8); 
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            width: 100%; 
+            max-width: 480px; /* <--- INCREASED THIS NUMBER */
+            padding: 2.5rem; 
+            border-radius: 24px; 
+        }
+
+        .input-group { margin-bottom: 1.5rem; transition: all 0.4s ease; overflow: hidden; }
+        .input-group label { display: block; margin-bottom: 8px; color: #cbd5e1; font-size: 0.95rem; font-weight: 500; }
+        
+        /* FIX FOR THE EMAIL FIELD: Forces text to be bright white */
+        .input-group input { 
+            width: 100%; 
+            padding: 14px 16px; 
+            border-radius: 12px; 
+            background: rgba(15, 23, 42, 0.8) !important; 
+            border: 1px solid rgba(255, 255, 255, 0.2) !important; 
+            color: #ffffff !important; 
+            font-size: 1rem;
+            outline: none; 
+            transition: 0.3s; 
+            box-sizing: border-box;
+        }
+        
+        .input-group input:focus { 
+            border-color: var(--primary) !important; 
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25); 
+        }
+        
+        /* The magical sliding Name field */
+        #name-group { max-height: 0; opacity: 0; margin-bottom: 0; }
+        #name-group.show { max-height: 100px; opacity: 1; margin-bottom: 1.5rem; }
+
+        .auth-toggle { text-align: center; margin-top: 20px; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; }
+        .auth-toggle span { color: var(--primary); font-weight: bold; transition: 0.3s; }
+        .auth-toggle span:hover { text-shadow: 0 0 10px var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="glass-panel auth-container">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h2><i class="fas fa-fire" style="color: var(--primary);"></i> MacroMaster</h2>
+            <p id="auth-title" style="color: var(--text-muted); margin-top: 5px;">Sign in to your account</p>
+        </div>
+
+        <div class="input-group" id="name-group">
+            <label>Full Name</label>
+            <input type="text" id="auth-name" placeholder="e.g. Shivam Kumar">
+        </div>
+
+        <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" id="auth-email" placeholder="e.g. shivam@example.com">
+        </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="auth-password" placeholder="••••••••">
+        </div>
+
+        <button id="auth-btn" class="primary-btn glow-effect" style="width: 100%; justify-content: center; padding: 12px; font-size: 1rem;">
+            Sign In
+        </button>
+
+        <div class="auth-toggle" onclick="toggleAuthMode()">
+            <p id="auth-switch-text">Don't have an account? <span>Sign Up</span></p>
+        </div>
+        
+        <p id="auth-error" style="color: #ef4444; text-align: center; margin-top: 15px; font-size: 0.9rem; display: none;"></p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        // Notice we added 'updateProfile' here!
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBwb0oMB3OWvnbwNh4vQ2_GaEkpTro3jB8",
+  authDomain: "macromaster-f84d7.firebaseapp.com",
+  projectId: "macromaster-f84d7",
+  storageBucket: "macromaster-f84d7.firebasestorage.app",
+  messagingSenderId: "761027683964",
+  appId: "1:761027683964:web:651fd4a16f3ac0143e8bf9"
+};
+        
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        let isLoginMode = true;
+        
+        window.toggleAuthMode = () => {
+            isLoginMode = !isLoginMode;
+            
+            // Smoothly slide the name field open or closed
+            const nameGroup = document.getElementById('name-group');
+            if(isLoginMode) { nameGroup.classList.remove('show'); } 
+            else { nameGroup.classList.add('show'); }
+
+            document.getElementById('auth-title').innerText = isLoginMode ? "Sign in to your account" : "Create a new account";
+            document.getElementById('auth-btn').innerText = isLoginMode ? "Sign In" : "Create Account";
+            document.getElementById('auth-switch-text').innerHTML = isLoginMode ? "Don't have an account? <span>Sign Up</span>" : "Already have an account? <span>Sign In</span>";
+        };
+
+        document.getElementById('auth-btn').addEventListener('click', () => {
+            const name = document.getElementById('auth-name').value;
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const errorText = document.getElementById('auth-error');
+            
+            errorText.style.display = 'none'; 
+
+            if (isLoginMode) {
+                signInWithEmailAndPassword(auth, email, password)
+                    .then(() => {
+                        // Secretly save that this is a RETURNING user
+                        sessionStorage.setItem('isNewSignup', 'false');
+                        window.location.href = "index.html";
+                    })
+                    .catch((error) => { errorText.innerText = error.message.replace("Firebase:", ""); errorText.style.display = 'block'; });
+            } else {
+                if(!name) { errorText.innerText = "Please enter your name."; errorText.style.display = 'block'; return; }
+
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        // Save their Name to their profile before sending them to the dashboard!
+                        return updateProfile(userCredential.user, { displayName: name }).then(() => {
+                            // Secretly save that this is a BRAND NEW user
+                            sessionStorage.setItem('isNewSignup', 'true');
+                            window.location.href = "index.html"; 
+                        });
+                    })
+                    .catch((error) => { errorText.innerText = error.message.replace("Firebase:", ""); errorText.style.display = 'block'; });
+            }
+        });
+    </script>
+</body>
+</html>
